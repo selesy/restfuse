@@ -46,7 +46,7 @@ public class RequestConfiguration {
     addAuthentication( call, request );
     addContentType( call, request );
     addHeader( call, request, context );
-    addBody( call, request );
+    addBody( call, request, context );
     return request;
   }
 
@@ -110,11 +110,23 @@ public class RequestConfiguration {
     }
   }
 
-  private void addBody( HttpTest test, InternalRequest request ) {
+  /**
+   * @author Andreas Mihm  added the check fo a dynamic request body which will be send with the request
+   * 
+   * @param test
+   * @param request
+   * @param context
+   */
+  private void addBody( HttpTest test, InternalRequest request, RequestContext context ) {
     if( !test.file().equals( "" ) ) {
+      request.setContentString( test.file() );
       request.setContent( getFileStream( test.file() ) );
     } else if( !test.content().equals( "" ) ) {
+      request.setContentString( test.content() );
       request.setContent( getContentStream( test.content() ) );
+    } else if (context.getDynamicBody() != null && !context.getDynamicBody().equals( "" )) {
+      request.setContentString( context.getDynamicBody() );
+      request.setContent( getContentStream( context.getDynamicBody() ) );
     }
   }
 

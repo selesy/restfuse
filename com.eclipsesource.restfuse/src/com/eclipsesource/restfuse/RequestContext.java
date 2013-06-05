@@ -39,6 +39,8 @@ public class RequestContext {
   
   private Map<String, String> dynamicPathSegments = new HashMap<String, String>();
   
+  private String dynamicBody;
+  
   /**
    * <p>
    * Adds a header attribute to a request. 
@@ -79,5 +81,24 @@ public class RequestContext {
   public Map<String, String> getPathSegments() {
     return new HashMap<String, String>( dynamicPathSegments );
   }
+
+  
+  public String getDynamicBody() {
+    return dynamicBody;
+  }
+
+  
+  /**
+   * added workaround enhancement for manipulating the body sent with the request in a basic dynamic way
+   * 
+   * @author mihm
+   * 
+   * @param dynamicBody
+   */
+  public void setDynamicBody( String dynamicBody ) {
+    this.dynamicBody = dynamicBody;
+  }
+  
+  
   
 }

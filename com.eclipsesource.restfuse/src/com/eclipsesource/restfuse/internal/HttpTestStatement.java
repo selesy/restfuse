@@ -112,6 +112,8 @@ public class HttpTestStatement extends Statement {
 
   private Response callService( InternalRequest request ) {
     Method requestMethod = description.getAnnotation( HttpTest.class ).method();
+    System.out.println("REQUEST " + requestMethod + " " + request.getUrl());
+    System.out.println("               " + request.getContentString());
     Response result = null;
     if( requestMethod.equals( Method.GET ) ) {
       result = request.get();
@@ -125,6 +127,9 @@ public class HttpTestStatement extends Statement {
       result = request.head();
     } else if( requestMethod.equals( Method.OPTIONS ) ) {
       result = request.options();
+    }
+    if (result != null) {
+      System.out.println("       RESPONSE " + result.getBody());
     }
     return result;
   }
