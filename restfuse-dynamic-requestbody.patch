@@ -1,0 +1,158 @@
+### Eclipse Workspace Patch 1.0
+#P com.eclipsesource.restfuse
+diff --git META-INF/MANIFEST.MF META-INF/MANIFEST.MF
+index 3a96ece..3778df5 100644
+--- META-INF/MANIFEST.MF
++++ META-INF/MANIFEST.MF
+@@ -2,7 +2,7 @@
+ Bundle-ManifestVersion: 2
+ Bundle-Name: restfuse
+ Bundle-SymbolicName: com.eclipsesource.restfuse
+-Bundle-Version: 1.2.0.qualifier
++Bundle-Version: 1.2.1.qualifier
+ Bundle-Vendor: EclipseSource
+ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+ Export-Package: com.eclipsesource.restfuse;version="1.1.0",
+diff --git src/com/eclipsesource/restfuse/MediaType.java src/com/eclipsesource/restfuse/MediaType.java
+index 64ab93b..22b70e3 100644
+--- src/com/eclipsesource/restfuse/MediaType.java
++++ src/com/eclipsesource/restfuse/MediaType.java
+@@ -25,7 +25,7 @@
+   APPLICATION_ATOM_XML( "application/atom+xml" ),
+   APPLICATION_XHTML_XML( "application/xhtml+xml" ),
+   APPLICATION_SVG_XML( "application/svg+xml" ),
+-  APPLICATION_JSON( "application/json" ),
++  APPLICATION_JSON( "application/json;charset=utf-8" ),
+   APPLICATION_FORM_URLENCODED( "application/x-www-form-urlencoded" ),
+   MULTIPART_FORM_DATA( "multipart/form-data" ),
+   APPLICATION_OCTET_STREAM( "application/octet-stream" ),
+diff --git src/com/eclipsesource/restfuse/RequestContext.java src/com/eclipsesource/restfuse/RequestContext.java
+index c117ac0..90b61cc 100644
+--- src/com/eclipsesource/restfuse/RequestContext.java
++++ src/com/eclipsesource/restfuse/RequestContext.java
+@@ -39,6 +39,8 @@
+   
+   private Map<String, String> dynamicPathSegments = new HashMap<String, String>();
+   
++  private String dynamicBody;
++  
+   /**
+    * <p>
+    * Adds a header attribute to a request. 
+@@ -79,5 +81,24 @@
+   public Map<String, String> getPathSegments() {
+     return new HashMap<String, String>( dynamicPathSegments );
+   }
++
++  
++  public String getDynamicBody() {
++    return dynamicBody;
++  }
++
++  
++  /**
++   * added workaround enhancement for manipulating the body sent with the request in a basic dynamic way
++   * 
++   * @author mihm
++   * 
++   * @param dynamicBody
++   */
++  public void setDynamicBody( String dynamicBody ) {
++    this.dynamicBody = dynamicBody;
++  }
++  
++  
+   
+ }
+diff --git src/com/eclipsesource/restfuse/internal/HttpTestStatement.java src/com/eclipsesource/restfuse/internal/HttpTestStatement.java
+index b900d54..472e115 100644
+--- src/com/eclipsesource/restfuse/internal/HttpTestStatement.java
++++ src/com/eclipsesource/restfuse/internal/HttpTestStatement.java
+@@ -112,6 +112,8 @@
+ 
+   private Response callService( InternalRequest request ) {
+     Method requestMethod = description.getAnnotation( HttpTest.class ).method();
++    System.out.println("REQUEST " + requestMethod + " " + request.getUrl());
++    System.out.println("               " + request.getContentString());
+     Response result = null;
+     if( requestMethod.equals( Method.GET ) ) {
+       result = request.get();
+@@ -126,6 +128,9 @@
+     } else if( requestMethod.equals( Method.OPTIONS ) ) {
+       result = request.options();
+     }
++    if (result != null) {
++      System.out.println("       RESPONSE " + result.getBody());
++    }
+     return result;
+   }
+ 
+diff --git src/com/eclipsesource/restfuse/internal/InternalRequest.java src/com/eclipsesource/restfuse/internal/InternalRequest.java
+index 51ba81f..53f4f75 100644
+--- src/com/eclipsesource/restfuse/internal/InternalRequest.java
++++ src/com/eclipsesource/restfuse/internal/InternalRequest.java
+@@ -29,6 +29,8 @@
+   private final String url;
+   private InputStream content;
+   private String mediaType;
++  
++  private String contentString;
+ 
+   public InternalRequest( String url ) {
+     this.url = url;
+@@ -36,6 +38,17 @@
+     authentications = new ArrayList<AuthenticationInfo>();
+   }
+ 
++  
++  public String getContentString() {
++    return contentString;
++  }
++
++  public void setContentString( String contentString ) {
++    this.contentString = contentString;
++  }
++
++
++
+   public void setContentType( String mediaType ) {
+     this.mediaType = mediaType;
+   }
+diff --git src/com/eclipsesource/restfuse/internal/RequestConfiguration.java src/com/eclipsesource/restfuse/internal/RequestConfiguration.java
+index f56e6e4..abb7161 100644
+--- src/com/eclipsesource/restfuse/internal/RequestConfiguration.java
++++ src/com/eclipsesource/restfuse/internal/RequestConfiguration.java
+@@ -46,7 +46,7 @@
+     addAuthentication( call, request );
+     addContentType( call, request );
+     addHeader( call, request, context );
+-    addBody( call, request );
++    addBody( call, request, context );
+     return request;
+   }
+ 
+@@ -110,11 +110,23 @@
+     }
+   }
+ 
+-  private void addBody( HttpTest test, InternalRequest request ) {
++  /**
++   * @author Andreas Mihm  added the check fo a dynamic request body which will be send with the request
++   * 
++   * @param test
++   * @param request
++   * @param context
++   */
++  private void addBody( HttpTest test, InternalRequest request, RequestContext context ) {
+     if( !test.file().equals( "" ) ) {
++      request.setContentString( test.file() );
+       request.setContent( getFileStream( test.file() ) );
+     } else if( !test.content().equals( "" ) ) {
++      request.setContentString( test.content() );
+       request.setContent( getContentStream( test.content() ) );
++    } else if (context.getDynamicBody() != null && !context.getDynamicBody().equals( "" )) {
++      request.setContentString( context.getDynamicBody() );
++      request.setContent( getContentStream( context.getDynamicBody() ) );
+     }
+   }
+ 
