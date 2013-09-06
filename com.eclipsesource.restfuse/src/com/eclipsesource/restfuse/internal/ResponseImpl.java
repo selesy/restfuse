@@ -56,7 +56,10 @@ public class ResponseImpl implements Response {
 
   @Override
   public MediaType getType() {
-    return MediaType.fromString( contentType );
+      if (contentType==null)
+          return null;
+      String[] splitCT=contentType.split(";");
+    return MediaType.fromString( splitCT[0]);
   }
 
   @Override
