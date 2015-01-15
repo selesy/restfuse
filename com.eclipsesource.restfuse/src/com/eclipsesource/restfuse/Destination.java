@@ -76,7 +76,7 @@ public class Destination implements TestRule {
     checkTestObject( testObject );
     this.testObject = testObject;
     this.baseUrl = baseUrl;
-    this.context = new RequestContext();
+    resetRequestContext();
   }
   
   /**
@@ -97,7 +97,7 @@ public class Destination implements TestRule {
     this( testObject, baseUrl );
     this.proxyHost = proxyHost;
     this.proxyPort = proxyPort;
-    this.context = new RequestContext();
+    resetRequestContext();
   }
 
   /**
@@ -106,6 +106,13 @@ public class Destination implements TestRule {
    */
   public RequestContext getRequestContext() {
     return context;
+  }
+  
+  /**
+   * Discards and creates a new {@link RequestContext} for this {@link Destination}.
+   */
+  public void resetRequestContext(){
+    this.context = new RequestContext();
   }
   
   private void checkBaseUrl( String baseUrl ) {
