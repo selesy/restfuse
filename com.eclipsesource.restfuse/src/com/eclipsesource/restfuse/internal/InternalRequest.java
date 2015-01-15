@@ -29,12 +29,25 @@ public class InternalRequest {
   private final String url;
   private InputStream content;
   private String mediaType;
+  
+  private String contentString;
 
   public InternalRequest( String url ) {
     this.url = url;
     headers = new HashMap<String, List<String>>();
     authentications = new ArrayList<AuthenticationInfo>();
   }
+
+  
+  public String getContentString() {
+    return contentString;
+  }
+
+  public void setContentString( String contentString ) {
+    this.contentString = contentString;
+  }
+
+
 
   public void setContentType( String mediaType ) {
     this.mediaType = mediaType;

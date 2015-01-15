@@ -41,6 +41,7 @@ public class RequestContext {
   private Map<String, String> dynamicPathSegments = new HashMap<String, String>();
   
   private AuthenticationInfo authentication = null;
+  private String dynamicBody;
   
   /**
    * <p>
@@ -82,6 +83,25 @@ public class RequestContext {
   public Map<String, String> getPathSegments() {
     return new HashMap<String, String>( dynamicPathSegments );
   }
+
+  
+  public String getDynamicBody() {
+    return dynamicBody;
+  }
+
+  
+  /**
+   * added workaround enhancement for manipulating the body sent with the request in a basic dynamic way
+   * 
+   * @author mihm
+   * 
+   * @param dynamicBody
+   */
+  public void setDynamicBody( String dynamicBody ) {
+    this.dynamicBody = dynamicBody;
+  }
+  
+  
   
   /**
    * Sets the authentication information for this {@link RequestContext} using {@link AuthenticationType#BASIC}.
