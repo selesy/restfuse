@@ -5,7 +5,6 @@
  * http://www.eclipse.org/legal/epl-v10.html 
  * 
  * Contributors: Holger Staudacher - initial API and implementation
- * 
  ******************************************************************************/
 package com.eclipsesource.restfuse.internal;
 
@@ -43,7 +42,7 @@ public class RequestConfiguration {
     HttpTest call = description.getAnnotation( HttpTest.class );
     String rawPath = combineUrlAndPath( baseUrl, call.path() );
     InternalRequest request = new InternalRequest( substituePathSegments( rawPath, context ) );
-    addAuthentication( call, request );
+    addAuthentication( call, request, context );
     addContentType( call, request );
     addHeader( call, request, context );
     addBody( call, request );
@@ -57,19 +56,26 @@ public class RequestConfiguration {
     while( matcher.find() ) {
       String segment = matcher.group( 1 );
       checkSubstitutionExists( context, segment );
-      substitutedPath = substitutedPath.replace( "{" + segment + "}", 
-                                                 context.getPathSegments().get( segment ) );
+      substitutedPath = substitutedPath.replace( "{" + segment + "}", context.getPathSegments()
+        .get( segment ) );
     }
     return substitutedPath;
   }
 
   private void checkSubstitutionExists( RequestContext context, String segment ) {
     if( !context.getPathSegments().containsKey( segment ) ) {
-      throw new IllegalStateException( "Misconfigured Destination. Could not replace {" + segment + "}." );
+      throw new IllegalStateException( "Misconfigured Destination. Could not replace {"
+                                       + segment
+                                       + "}." );
     }
   }
 
-  private void addAuthentication( HttpTest call, InternalRequest request ) {
+  private void addAuthentication( HttpTest call, InternalRequest request, RequestContext context ) {
+    addAuthenticationFromContext( request, context );
+    addAuthenticationFromAnnotation( call, request );
+  }
+
+  private void addAuthenticationFromAnnotation( HttpTest call, InternalRequest request ) {
     Authentication[] authentications = call.authentications();
     if( authentications != null ) {
       for( Authentication authentication : authentications ) {
@@ -78,6 +84,13 @@ public class RequestConfiguration {
         String password = authentication.password();
         request.addAuthenticationInfo( new AuthenticationInfo( type, user, password ) );
       }
+    }
+  }
+
+  private void addAuthenticationFromContext( InternalRequest request, RequestContext context ) {
+    AuthenticationInfo authentication = context.getAuthentication();
+    if( authentication != null ) {
+      request.addAuthenticationInfo( authentication );
     }
   }
 

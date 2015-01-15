@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.eclipsesource.restfuse.annotation.Header;
+import com.eclipsesource.restfuse.internal.AuthenticationInfo;
 
 /**
  * <p>
@@ -38,6 +39,8 @@ public class RequestContext {
   public Map<String, String> headers = new HashMap<String, String>();
   
   private Map<String, String> dynamicPathSegments = new HashMap<String, String>();
+  
+  private AuthenticationInfo authentication = null;
   
   /**
    * <p>
@@ -78,6 +81,34 @@ public class RequestContext {
   
   public Map<String, String> getPathSegments() {
     return new HashMap<String, String>( dynamicPathSegments );
+  }
+  
+  /**
+   * Sets the authentication information for this {@link RequestContext} using {@link AuthenticationType#BASIC}.
+   * @param user - user name
+   * @param password - password
+   * @return {@link RequestContext}
+   */
+  public RequestContext setAuthentication(String user, String password){
+    return setAuthentication( user, password , AuthenticationType.BASIC );
+  }
+  
+  /**
+   * Sets the authentication information for this {@link RequestContext}.
+   * @param user - user name
+   * @param password - password
+   * @return {@link RequestContext}
+   */
+  public RequestContext setAuthentication(String user, String password, AuthenticationType type){
+    authentication = new AuthenticationInfo( type, user, password );
+    return this;
+  }
+  
+  /**
+   * @return {@link AuthenticationInfo}
+   */
+  public AuthenticationInfo getAuthentication(){
+    return authentication;
   }
   
 }
