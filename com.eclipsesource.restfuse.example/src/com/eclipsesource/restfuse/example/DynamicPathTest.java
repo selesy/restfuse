@@ -1,6 +1,6 @@
 package com.eclipsesource.restfuse.example;
 
-import static com.eclipsesource.restfuse.Assert.assertOk;
+import static com.eclipsesource.restfuse.Assert.assertTemporaryRedirected;
 
 import org.junit.Rule;
 import org.junit.runner.RunWith;
@@ -24,12 +24,12 @@ public class DynamicPathTest {
 
   @HttpTest(method = Method.GET, path = "/{file}.jar")
   public void checkRestfuseDownloadJarStatus() {
-    assertOk( response );
+	  assertTemporaryRedirected( response );
   }
   
   @HttpTest(method = Method.GET, path = "/{file}-javadoc.jar")
   public void checkRestfuseDownloadDocsStatus() {
-    assertOk( response );
+	  assertTemporaryRedirected( response );
   }
 
   private Destination getDestination() {
