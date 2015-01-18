@@ -4,16 +4,15 @@
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>com.eclipsesource</groupId>
-		<artifactId>restfuse</artifactId>
+		<groupId>com.eclipsesource.restfuse</groupId>
+		<artifactId>restfuse-parent</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
-		<relativePath>../build/com.eclipsesource.restfuse.releng</relativePath>
 	</parent>
 
-	<groupId>com.eclipsesource</groupId>
-	<artifactId>com.eclipsesource.restfuse</artifactId>
+	<groupId>com.eclipsesource.restfuse</groupId>
+	<artifactId>restfuse</artifactId>
 	<version>1.2.1-SNAPSHOT</version>
-	<packaging>eclipse-plugin</packaging>
+	<packaging>jar</packaging>
 
 	<profiles>
 		<profile>
