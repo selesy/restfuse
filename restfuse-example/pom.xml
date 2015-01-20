@@ -46,4 +46,16 @@
 		</profile>
 	</profiles>
 
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.eclipsesource.restfuse</groupId>
+			<artifactId>restfuse</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 </project>
