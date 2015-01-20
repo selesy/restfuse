@@ -1,10 +1,6 @@
 package com.eclipsesource.restfuse.example;
 
-<<<<<<< HEAD
 import static com.eclipsesource.restfuse.Assert.assertFound;
-=======
-import static com.eclipsesource.restfuse.Assert.assertTemporaryRedirected;
->>>>>>> eacdb0294255d75e7f71ae8f5e12d49de3ec4ee2
 
 import org.junit.Rule;
 import org.junit.runner.RunWith;
