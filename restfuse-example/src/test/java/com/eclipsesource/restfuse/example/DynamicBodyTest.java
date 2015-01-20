@@ -10,6 +10,9 @@
  ******************************************************************************/
 package com.eclipsesource.restfuse.example;
 
+import static com.eclipsesource.restfuse.Assert.assertOk;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Rule;
 import org.junit.runner.RunWith;
 
@@ -40,26 +43,26 @@ public class DynamicBodyTest {
 	@Context
 	private Response response;
 
-	// static variale to store the requestBody to be sent
+	// static variable to store the requestBody to be sent
 	private static String requestBody;
 
-	@HttpTest(method = Method.GET, path = "/v1/items", order = 1)
+	@HttpTest(method = Method.GET, path = "/oqqvi0oq", order = 1)
 	public void a_getItems() {
-		// assertOk( response );
-		String jsonResponse = response.getBody();
+		assertOk( response );
+		assertEquals("ok", response.getBody());
 
 		// prepare next test method
 		requestBody = "{\"name\":\"testitem\", \"description\":\"a new item\"}";
 	}
 
-	@HttpTest(method = Method.POST, path = "/v1/items", order = 2)
+	@HttpTest(method = Method.POST, path = "/oqqvi0oq", order = 2)
 	public void b_addItem() {
-		// assertOk( response );
-		String jsonResponse = response.getBody();
+		assertOk( response );
+		assertEquals("ok", response.getBody());
 	}
 
 	private Destination getDestination() {
-		Destination destination = new Destination(this, "http://localhost");
+		Destination destination = new Destination(this, "http://requestb.in");
 		RequestContext context = destination.getRequestContext();
 		if (requestBody != null) {
 			context.setDynamicBody(requestBody);
